@@ -1,11 +1,13 @@
 using CryptoWalletApi;
+using CryptoWalletApi.Repositories;
+using CryptoWalletApi.Services;
 using CryptoWalletApi.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +39,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IJwtUtils, JwtUtils>();
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
@@ -56,5 +62,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/", () => "Hello world!");
 
 app.Run();
